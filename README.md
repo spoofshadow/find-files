@@ -64,7 +64,7 @@ Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
 To run it from anywhere by typing `ff`, add this line to your PowerShell profile (open it with `notepad $PROFILE`):
 
 ```powershell
-Set-Alias ff C:\Users\spoof\word\Find-Files.ps1
+Set-Alias ff C:\Path\to\script\Find-Files.ps1
 ```
 
 Then use it like this:
