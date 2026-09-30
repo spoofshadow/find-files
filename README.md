@@ -72,4 +72,65 @@ Then use it like this:
 ```powershell
 ff report -Path C:\
 ```
+------------------------------------------------------------------------------------------------
+
+# find-files.sh (Linux)
+
+The bash version of the same tool, for Debian and other Linux systems. It needs only `find`, `grep` and `awk`, which Debian includes by default.
+If you'd rather use one script on both systems, you could install PowerShell 7 on Debian and try running Find-Files.ps1 there. I haven't tested that.
+
+## Setup
+
+Copy `find-files.sh` to the Linux machine, then make it executable:
+
+```bash
+chmod +x find-files.sh
+```
+
+To run it from anywhere as `ff`, install it into your PATH:
+
+```bash
+sudo cp find-files.sh /usr/local/bin/ff
+```
+
+If you edited the file on Windows and see `bad interpreter` or `$'\r': command not found`, it has Windows line endings. Fix them with:
+
+```bash
+sed -i 's/\r$//' find-files.sh
+```
+
+## Examples
+
+```bash
+./find-files.sh report                        # files and folders containing "report"
+./find-files.sh project -t folder             # folders only
+./find-files.sh '*.pdf' -p ~/Documents        # wildcard match (quote wildcards!)
+./find-files.sh -c invoice -e txt,csv         # text inside .txt and .csv files
+./find-files.sh -c 'error [0-9]+' -r -p /var/log   # regex search inside files
+./find-files.sh budget -p / -m 20 -o          # stop at 20 results, then pick one to open
+```
+
+## Options
+
+| Short | Long | PowerShell equivalent |
+|---|---|---|
+| (first argument) | | `-Name` |
+| `-p DIR` | `--path` | `-Path` |
+| `-t TYPE` | `--type` | `-Type` (`all`, `file`, `folder`) |
+| `-c TEXT` | `--content` | `-Content` |
+| `-r` | `--regex` | `-Regex` |
+| `-e LIST` | `--ext` | `-Ext` |
+| `-m N` | `--max` | `-Max` |
+| `-H` | `--hidden` | `-IncludeHidden` |
+| `-o` | `--open` | `-Open` |
+| `-h` | `--help` | |
+
+## Linux-specific notes
+
+- **Quote wildcards** (`'*.pdf'`), or bash expands them against the current folder before the script sees them.
+- **Hidden folders** are folders whose names start with `.`, such as `.cache` and `.git`. They are skipped unless you pass `-H`.
+- `/proc`, `/sys`, `/dev` and `/run` are always skipped, so searching from `/` is safe.
+- Folders you can't read are skipped silently. Use `sudo` to search everything.
+- **`-o` opens results with `xdg-open` on a desktop.** On a server with no desktop, files open in `$EDITOR` (or `nano`), and for folders it prints a `cd` command.
+- Binary files are skipped during content searches.
 
